@@ -69,7 +69,7 @@ If you want to generate an Ad Hoc profile instead:
 
     sign --development
 
-By default, ```sign``` will install the downloaded profile on your machine. If you just want to generate the profile and skip the installation, use the following flag:
+By default, Sign will install the downloaded profile on your machine. If you just want to generate the profile and skip the installation, use the following flag:
 
     sign --skip_install
 
@@ -82,18 +82,18 @@ In case you prefer environment variables:
 
 # How does it work?
 
-```Sign``` will access the ```iOS Dev Center``` to download, renew or generate the ```.mobileprovision``` file. Check out the full source code: [developer_center.rb](https://github.com/KrauseFx/sign/blob/master/lib/sign/developer_center.rb).
+Sign will access the iOS Dev Center to download, renew or generate the ```.mobileprovision``` file. Check out the full source code: [developer_center.rb](https://github.com/KrauseFx/sign/blob/master/lib/sign/developer_center.rb).
 
 
 ## How is my password stored?
-```Sign``` uses the password manager from [```Deliver```](https://github.com/KrauseFx/deliver#can-i-trust-deliver). Take a look the [Deliver README](https://github.com/KrauseFx/deliver#can-i-trust-deliver) for more information.
+Sign uses the password manager from [Deliver](https://github.com/KrauseFx/deliver#can-i-trust-deliver). Take a look the [Deliver README](https://github.com/KrauseFx/deliver#can-i-trust-deliver) for more information.
 
 # Tips
 ## Other helpful tools
 Check out other tools in this collection to speed up your deployment process:
 
-- [```deliver```](https://github.com/KrauseFx/deliver): Deploy screenshots, app metadata and app updates to the App Store using just one command
-- [```snapshot```](https://github.com/KrauseFx/snapshot): Create hundreds of screenshots of your iPhone app… while doing something else
+- [```Deliver```](https://github.com/KrauseFx/deliver): Deploy screenshots, app metadata and app updates to the App Store using just one command
+- [```Snapshot```](https://github.com/KrauseFx/snapshot): Create hundreds of screenshots of your iPhone app… while doing something else
 - [```FrameIt```](https://github.com/KrauseFx/frameit): Want a device frame around your screenshot? Do it in an instant!
 - [```PEM```](https://github.com/KrauseFx/pem): Tired of manually creating and maintaining your push certification profiles?
 
@@ -106,7 +106,7 @@ It will show you the ```mobileprovision``` files like this:
 
 
 # Need help?
-- If there is a technical problem with ```sign```, submit an issue. Run ```sign --trace``` to get the stacktrace.
+- If there is a technical problem with Sign, submit an issue. Run ```sign --trace``` to get the stacktrace.
 - I'm available for contract work - drop me an email: sign@felixkrause.at
 
 # License
