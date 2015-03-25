@@ -1,5 +1,10 @@
 module Sigh
   class Manager
+    def run(options, args)
+      Helper.log.info "Profiles"
+      list_profiles
+    end
+
     def self.start
       path = Sigh::DeveloperCenter.new.run
 
@@ -36,5 +41,14 @@ module Sigh
         raise "Failed installation of provisioning profile at location: #{destination}".red
       end
     end
+
+    def list_profiles
+      profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/"
+      profiles = Dir[profiles_path + "*.mobileprovision"]
+      profiles.each do |profile|
+        Helper.log.info profile
+      end
+    end
+
   end
 end
