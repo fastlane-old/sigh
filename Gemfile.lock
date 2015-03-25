@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     sigh (0.4.6)
+      excon
       fastlane_core (>= 0.3.1)
       plist (~> 3.1.0)
 
@@ -31,7 +32,8 @@ GEM
       security
     diff-lcs (1.2.5)
     docile (1.1.5)
-    fastlane_core (0.3.2)
+    excon (0.44.4)
+    fastlane_core (0.3.3)
       babosa
       capybara (~> 2.4.3)
       colored
