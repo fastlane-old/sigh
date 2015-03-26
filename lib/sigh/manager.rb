@@ -45,10 +45,9 @@ module Sigh
     end
 
     def list_profiles
-      profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/"
-      profiles = Dir[profiles_path + "*.mobileprovision"]
+      profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
       now = DateTime.now
-      profiles.each do |profile_path|
+      Dir[profiles_path].each do |profile_path|
         profile_plist = Plist::parse_xml(`security cms -D -i '#{profile_path}'`)
         if now < profile_plist["ExpirationDate"]
           Helper.log.info(profile_plist["Name"].green)
