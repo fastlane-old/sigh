@@ -1,3 +1,5 @@
+require 'plist'
+
 module Sigh
   class Manager
     def run(options, args)
@@ -45,8 +47,14 @@ module Sigh
     def list_profiles
       profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/"
       profiles = Dir[profiles_path + "*.mobileprovision"]
-      profiles.each do |profile|
-        Helper.log.info profile
+      now = DateTime.now
+      profiles.each do |profile_path|
+        profile_plist = Plist::parse_xml(`security cms -D -i '#{profile_path}'`)
+        if now < profile_plist["ExpirationDate"]
+          Helper.log.info(profile_plist["Name"].green)
+        else
+          Helper.log.info(profile_plist["Name"].red)
+        end
       end
     end
 
