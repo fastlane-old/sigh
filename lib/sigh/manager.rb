@@ -2,9 +2,17 @@ require 'plist'
 
 module Sigh
   class Manager
+    # Types of certificates
+    LIST = "list"
+    CLEANUP = "cleanup"
+
     def run(options, args)
-      Helper.log.info "Profiles"
-      list_profiles
+      command = get_inputs(options, args)
+      if command == LIST
+        list_profiles
+      elsif command == CLEANUP
+        # NOOP
+      end
     end
 
     def self.start
@@ -44,18 +52,43 @@ module Sigh
       end
     end
 
-    def list_profiles
-      profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
-      now = DateTime.now
-      Dir[profiles_path].each do |profile_path|
-        profile_plist = Plist::parse_xml(`security cms -D -i '#{profile_path}'`)
-        if now < profile_plist["ExpirationDate"]
-          Helper.log.info(profile_plist["Name"].green)
-        else
-          Helper.log.info(profile_plist["Name"].red)
-        end
-      end
+    def get_inputs(options, args)
+      command = args.first || LIST
+      return command
     end
 
+    def list_profiles
+      Helper.log.info "Provisioning profiles installed:"
+      
+      profiles = load_profiles
+      now = DateTime.now
+      profiles_expired_count = 0
+      
+      profiles.each do |profile|
+        if now < profile["ExpirationDate"]
+          Helper.log.info(profile["Name"].green)
+        else
+          profiles_expired_count += 1
+          Helper.log.info(profile["Name"].red)
+        end
+      end
+      Helper.log.info "#{profiles.length} installed profiles"
+      Helper.log.info "#{profiles_expired_count} are expired"
+      Helper.log.info "#{profiles.length - profiles_expired_count} are still valid"
+    end
+
+    def load_profiles
+      profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
+      profile_paths = Dir[profiles_path]
+
+      profiles = []
+      profile_paths.each do |profile_path|
+        profile = Plist::parse_xml(`security cms -D -i '#{profile_path}'`)
+        profile['Path'] = profile_path
+        profiles << profile
+      end
+
+      return profiles
+    end
   end
 end
