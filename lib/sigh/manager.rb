@@ -11,7 +11,7 @@ module Sigh
       if command == LIST
         list_profiles
       elsif command == CLEANUP
-        # NOOP
+        cleanup_profiles
       end
     end
 
@@ -58,9 +58,10 @@ module Sigh
     end
 
     def list_profiles
-      Helper.log.info "Provisioning profiles installed:"
-      
       profiles = load_profiles
+
+      Helper.log.info "Provisioning profiles installed:"
+
       now = DateTime.now
       profiles_expired_count = 0
       
@@ -77,7 +78,17 @@ module Sigh
       Helper.log.info "#{profiles.length - profiles_expired_count} are still valid"
     end
 
+    def cleanup_profiles
+      profiles = load_profiles.select { |profile| profile["ExpirationDate"] < DateTime.now }
+
+      Helper.log.info "Deleting #{profiles.length} profiles"
+      profiles.each do |profile|
+        File.delete profile["Path"]
+      end
+    end
+
     def load_profiles
+      Helper.log.info "Loading Provisioning profiles from ~/Library/MobileDevice/Provisioning Profiles/"
       profiles_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/*.mobileprovision"
       profile_paths = Dir[profiles_path]
 
