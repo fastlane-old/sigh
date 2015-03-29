@@ -99,6 +99,8 @@ module Sigh
         profiles << profile
       end
 
+      profiles = profiles.sort_by {|profile| profile["Name"].downcase}
+
       return profiles
     end
   end
