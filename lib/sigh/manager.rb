@@ -75,7 +75,7 @@ module Sigh
       end
       Helper.log.info "#{profiles.length} installed profiles"
       Helper.log.info "#{profiles_expired_count} are expired"
-      Helper.log.info "#{profiles.length - profiles_expired_count} are still valid"
+      Helper.log.info "#{profiles.length - profiles_expired_count} are valid"
     end
 
     def cleanup_profiles
