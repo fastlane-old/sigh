@@ -60,18 +60,21 @@ module Sigh
     def list_profiles
       profiles = load_profiles
 
-      Helper.log.info "Provisioning profiles installed:"
-
+      Helper.log.info "Provisioning profiles installed"
+      Helper.log.info "Valid profiles:"
       profiles_valid = profiles.select { |profile| profile["ExpirationDate"] > DateTime.now }
       profiles_valid.each do |profile|
-          Helper.log.info profile["Name"].green
+        Helper.log.info profile["Name"].green
       end
       
+      Helper.log.info "-----------------"
+      Helper.log.info "Expired profiles:"
       profiles_expired = profiles.select { |profile| profile["ExpirationDate"] < DateTime.now }
       profiles_expired.each do |profile|
-          Helper.log.info profile["Name"].red
+        Helper.log.info profile["Name"].red
       end
       
+      Helper.log.info "-------"
       Helper.log.info "Summary"
       Helper.log.info "#{profiles.length} installed profiles"
       Helper.log.info "#{profiles_expired.length} are expired"
