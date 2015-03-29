@@ -62,20 +62,20 @@ module Sigh
 
       Helper.log.info "Provisioning profiles installed:"
 
-      now = DateTime.now
-      profiles_expired_count = 0
-      
-      profiles.each do |profile|
-        if now < profile["ExpirationDate"]
-          Helper.log.info(profile["Name"].green)
-        else
-          profiles_expired_count += 1
-          Helper.log.info(profile["Name"].red)
-        end
+      profiles_valid = profiles.select { |profile| profile["ExpirationDate"] > DateTime.now }
+      profiles_valid.each do |profile|
+          Helper.log.info profile["Name"].green
       end
+      
+      profiles_expired = profiles.select { |profile| profile["ExpirationDate"] < DateTime.now }
+      profiles_expired.each do |profile|
+          Helper.log.info profile["Name"].red
+      end
+      
+      Helper.log.info "Summary"
       Helper.log.info "#{profiles.length} installed profiles"
-      Helper.log.info "#{profiles_expired_count} are expired"
-      Helper.log.info "#{profiles.length - profiles_expired_count} are valid"
+      Helper.log.info "#{profiles_expired.length} are expired"
+      Helper.log.info "#{profiles_valid.length} are valid"
     end
 
     def cleanup_profiles
