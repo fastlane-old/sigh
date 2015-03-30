@@ -1,4 +1,5 @@
 require 'plist'
+require 'fastlane_core'
 
 module Sigh
   class Manager
@@ -7,11 +8,13 @@ module Sigh
     CLEANUP = "cleanup"
 
     def run(options, args)
-      command = get_inputs(options, args)
+      command, clean_team_provisioning, clean_custom_pattern = get_inputs(options, args)
       if command == LIST
         list_profiles
       elsif command == CLEANUP
-        cleanup_profiles
+        pattern = clean_team_provisioning
+        pattern = clean_custom_pattern if clean_custom_pattern
+        cleanup_profiles(pattern)
       end
     end
 
@@ -54,7 +57,9 @@ module Sigh
 
     def get_inputs(options, args)
       command = args.first || LIST
-      return command
+      clean_team_provisioning = /iOS\ {0,1}Team Provisioning Profile: \w/ if options.clean_team_provisioning
+      clean_custom_pattern = /#{options.clean_custom_pattern}/ if options.clean_custom_pattern
+      return command, clean_team_provisioning, clean_custom_pattern
     end
 
     def list_profiles
@@ -81,12 +86,19 @@ module Sigh
       Helper.log.info "#{profiles_valid.length} are valid"
     end
 
-    def cleanup_profiles
-      profiles = load_profiles.select { |profile| profile["ExpirationDate"] < DateTime.now }
+    def cleanup_profiles(pattern = nil)
+      profiles = load_profiles.select { |profile| profile["ExpirationDate"] < DateTime.now || (pattern != nil && profile["Name"] =~ pattern) }
 
-      Helper.log.info "Deleting #{profiles.length} profiles"
+      Helper.log.info "The following provisioning profiles are either expired or matches your pattern:"
       profiles.each do |profile|
-        File.delete profile["Path"]
+        Helper.log.info profile["Name"].red
+      end
+
+      if agree("Delete these provisioning profiles? (y/n)  ", true)
+        Helper.log.info "Deleting #{profiles.length} profiles"
+        profiles.each do |profile|
+          File.delete profile["Path"]
+        end
       end
     end
 
