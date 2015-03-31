@@ -65,25 +65,36 @@ module Sigh
     def list_profiles
       profiles = load_profiles
 
+      now = DateTime.now
+      soon = (Date.today + 30).to_datetime
+
       Helper.log.info "Provisioning profiles installed"
-      Helper.log.info "Valid profiles:"
-      profiles_valid = profiles.select { |profile| profile["ExpirationDate"] > DateTime.now }
+      Helper.log.info "Valid:"
+      profiles_valid = profiles.select { |profile| profile["ExpirationDate"] > now && profile["ExpirationDate"] > soon }
       profiles_valid.each do |profile|
         Helper.log.info profile["Name"].green
       end
+
+      Helper.log.info ""
+      Helper.log.info "Expiring within 30 day:"
+      profiles_soon = profiles.select { |profile| profile["ExpirationDate"] > now && profile["ExpirationDate"] < soon }
+      profiles_soon.each do |profile|
+        Helper.log.info profile["Name"].yellow
+      end      
       
-      Helper.log.info "-----------------"
-      Helper.log.info "Expired profiles:"
-      profiles_expired = profiles.select { |profile| profile["ExpirationDate"] < DateTime.now }
+      Helper.log.info ""
+      Helper.log.info "Expired:"
+      profiles_expired = profiles.select { |profile| profile["ExpirationDate"] < now }
       profiles_expired.each do |profile|
         Helper.log.info profile["Name"].red
       end
       
-      Helper.log.info "-------"
+      Helper.log.info ""
       Helper.log.info "Summary"
       Helper.log.info "#{profiles.length} installed profiles"
-      Helper.log.info "#{profiles_expired.length} are expired"
-      Helper.log.info "#{profiles_valid.length} are valid"
+      Helper.log.info "#{profiles_expired.length} are expired".red
+      Helper.log.info "#{profiles_soon.length} are valid but will expire within 30 days".yellow
+      Helper.log.info "#{profiles_valid.length} are valid".green
     end
 
     def cleanup_profiles(pattern = nil)
