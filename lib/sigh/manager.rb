@@ -1,9 +1,17 @@
+require 'psst/psst'
+require 'sigh/profile_analyser'
+
 module Sigh
   class Manager
     def self.start
-      path = Sigh::DeveloperCenter.new.run
+      psst = FastlaneCore::Psst::Client.new
+      path = psst.find_provisioning_profile('net.sunapps.9', 'store').download
 
-      return nil unless path
+      raise "Something went wrong when downloading the provisioning profile" unless (path and File.exists?path)
+      
+      udid = Sigh::ProfileAnalyser.run(path)
+      ENV["SIGH_UDID"] = udid if udid
+      
 
       if Sigh.config[:filename]
         file_name = Sigh.config[:filename]

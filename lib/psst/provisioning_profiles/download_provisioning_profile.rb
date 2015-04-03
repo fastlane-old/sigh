@@ -4,11 +4,12 @@ module FastlaneCore
       # Downloads the given provisioning profile
       def download_provisioning_profile(profile)
         url = URL_DOWNLOAD_PROVISIONING_PROFILE + profile.id
-        response = Excon.get(url, 
-          headers: { "Cookie" => "myacinfo=#{@myacinfo}" }, # This needs to be fixed, requires more information :/ 
-          body: "teamId=#{@team_id}"
-        )
-        downloaded = Plist::parse_xml(response)
+
+        response = Excon.get(url, headers: { "Cookie" => "myacinfo=#{@myacinfo}" } )
+
+        path = File.join("/tmp", [profile.app.identifier, 'mobileprovision'].join('.'))
+        File.write(path, response.body)
+        return path
       end
     end
   end
