@@ -5,7 +5,7 @@ module Sigh
   class Manager
     def self.start
       psst = FastlaneCore::Psst::Client.new
-      path = psst.find_provisioning_profile('net.sunapps.9', 'store').download
+      path = psst.fetch_provisioning_profile('net.sunapps.9', 'store').download
 
       raise "Something went wrong when downloading the provisioning profile" unless (path and File.exists?path)
       

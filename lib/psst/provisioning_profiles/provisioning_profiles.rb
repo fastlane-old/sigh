@@ -53,8 +53,9 @@ module FastlaneCore
       end
 
       # Looks for a certain provisioning profile
+      # If it doesn't exist yet, it will be created
       # distribution_method valid values: [store, limited]
-      def find_provisioning_profile(bundle_identifier, distribution_method)
+      def fetch_provisioning_profile(bundle_identifier, distribution_method)
         provisioning_profiles.each do |profile|
           if profile.app.identifier == bundle_identifier and profile.distribution_method == distribution_method
             return profile
