@@ -1,6 +1,6 @@
 module FastlaneCore
   module Psst
-    class Psst
+    class Client
       # Team selection
       def select_team
         response = unzip(Excon.post(URL_LIST_TEAMS, headers: { 'Cookie' => "myacinfo=#{@myacinfo}" }))

@@ -2,7 +2,7 @@ require 'zlib'
 
 module FastlaneCore
   module Psst
-    class Psst
+    class Client
       # Is used to unzip compress server responses
       def unzip(resp)
         Zlib::GzipReader.new(StringIO.new(resp.body)).read

@@ -2,7 +2,7 @@ require 'psst/login/select_team'
 
 module FastlaneCore
   module Psst
-    class Psst
+    class Client
       def login(user = nil, password = nil)
         user ||= CredentialsManager::PasswordManager.shared_manager.username
         password ||= CredentialsManager::PasswordManager.shared_manager.password

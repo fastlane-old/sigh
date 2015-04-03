@@ -11,7 +11,7 @@ require 'psst/provisioning_profiles/provisioning_profiles'
 
 module FastlaneCore
   module Psst
-    class Psst
+    class Client
       
     end
   end

@@ -3,11 +3,11 @@ require 'psst/provisioning_profiles/download_provisioning_profile'
 module FastlaneCore
   module Psst
 
-
-    class ProvisioningProfile < Struct.new(:name, :type, :app_id, :app, :status, :expiration, :uuid, :id, :is_xcode_managed)
+    class ProvisioningProfile < Struct.new(:client, :name, :type, :app_id, :app, :status, :expiration, :uuid, :id, :is_xcode_managed, :distribution_method)
       # Parse the server response
-      def self.create(hash)
+      def self.create(client, hash)
         ProvisioningProfile.new(
+          client,
           hash['name'],
           hash['type'],
           hash['appId']['appIdId'],
@@ -16,8 +16,14 @@ module FastlaneCore
           hash['dateExpire'],
           hash['UUID'],
           hash['provisioningProfileId'],
-          hash['managingApp'] == 'Xcode'
+          hash['managingApp'] == 'Xcode',
+          hash['distributionMethod']
         )
+      end
+
+      # Downloads the given provisioning profile
+      def download
+        client.download_provisioning_profile(self)
       end
 
       def to_s
@@ -25,7 +31,9 @@ module FastlaneCore
       end
     end
 
-    class Psst
+
+
+    class Client
       def provisioning_profiles
         return @provisioning_profiles if @provisioning_profiles
 
@@ -35,14 +43,15 @@ module FastlaneCore
         profiles = Plist::parse_xml(response)['provisioningProfiles']
 
         @provisioning_profiles = profiles.collect do |current|
-          ProvisioningProfile.create(current)
+          ProvisioningProfile.create(self, current)
         end
       end
 
       # Looks for a certain provisioning profile
-      def find_profile(bundle_identifier, distribution_method)
+      # distribution_method valid values: [store, limited]
+      def find_provisioning_profile(bundle_identifier, distribution_method)
         provisioning_profiles.each do |profile|
-          if profile['distributionMethod'] == distribution_method and profile['appId']['identifier'] == bundle_identifier
+          if profile.app.identifier == bundle_identifier and profile.distribution_method == distribution_method
             return profile
           end
         end

@@ -1,6 +1,6 @@
 module FastlaneCore
   module Psst
-    class Psst
+    class Client
       ######## GENERAL ########
       PROTOCOL_VERSION = "QH65B2"
 

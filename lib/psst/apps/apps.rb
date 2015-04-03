@@ -21,7 +21,7 @@ module FastlaneCore
     end
 
 
-    class Psst
+    class Client
 
     end
   end
