@@ -1,12 +1,18 @@
-require 'lib/psst/urls'
-require 'lib/psst/helper'
-require 'lib/psst/login'
-require 'lib/psst/list_devices'
-require 'lib/psst/select_team'
-require 'lib/psst/list_provisioning_profiles'
+require 'excon' # HTTP Client
+require 'plist' # Some responses are in the plist format
+require 'pry' # TODO: Remove
+
+require 'psst/urls'
+require 'psst/helper'
+require 'psst/login/login'
+require 'psst/apps/apps'
+require 'psst/devices/devices'
+require 'psst/provisioning_profiles/provisioning_profiles'
 
 module FastlaneCore
-  class Psst
-    
+  module Psst
+    class Psst
+      
+    end
   end
 end
