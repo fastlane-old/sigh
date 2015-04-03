@@ -6,8 +6,8 @@ module FastlaneCore
       # Is used to unzip compress server responses
       def unzip(resp)
         Zlib::GzipReader.new(StringIO.new(resp.body)).read
-      rescue
-        Helper.log.error "Something went wrong with the following request: #{resp.data}"
+      rescue => ex
+        Helper.log.error "#{resp.data}\nSomething went wrong with the request: #{ex}"
         return nil
       end
     end
