@@ -1,21 +1,11 @@
 require 'spec_helper'
-require 'pry'
-
-require 'psst/psst'
 
 describe "Psst", now: true do
-  before do
-    ENV["DELIVER_USER"] = "sigh@krausefx.com"
-    ENV["DELIVER_PASSWORD"] = "so_secret"
-    @client = FastlaneCore::Psst::Client.new
-  end
-
   describe "Provisioning Profile" do
-    it "successfully logged in and selected the team" do
-      expect(@client.myacinfo).to eq("abcdef")
-      expect(@client.team_id).to eq("5A997XSHAA")
+    before do
+      @client = FastlaneCore::Psst::Client.new
     end
-
+    
     it "downloads an existing provisioning profile" do
       path = @client.fetch_provisioning_profile('net.sunapps.9', 'store').download
 
@@ -27,7 +17,7 @@ describe "Psst", now: true do
     end
 
     it "properly stores the provisioning profiles as structs" do
-      expect(@client.provisioning_profiles.count).to eq(58)
+      expect(@client.provisioning_profiles.count).to eq(33) # ignore the Xcode generated profiles
 
       profile = @client.provisioning_profiles.last
       expect(profile.client).to eq(@client)
@@ -39,6 +29,20 @@ describe "Psst", now: true do
       expect(profile.uuid).to eq('34b221d4-31aa-4e55-9ea1-e5fac4f7ff8c')
       expect(profile.is_xcode_managed).to eq(false)
       expect(profile.distribution_method).to eq('limited')
+    end
+
+    it "raises an exception when passing an invalid distribution type" do
+      expect {
+        @client.fetch_provisioning_profile('net.sunapps.999', 'invalid_parameter')
+      }.to raise_exception("Invalid distribution_method")
+    end
+
+    it "creates a new provisioning profile if it doesn't exist" do
+      # path = @client.fetch_provisioning_profile('net.sunapps.106', 'limited').download
+    end
+
+    it "repairs a provisioning profile if the old one is broken" do
+
     end
   end
 end

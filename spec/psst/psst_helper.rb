@@ -28,6 +28,18 @@ def stub_provisioning
   stub_request(:get, "https://developer.apple.com/account/ios/profile/profileContentDownload.action?displayId=7EKAHRBJ99").
          with(:headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developer.apple.com:443'}).
          to_return(:status => 200, :body => File.read(File.join(fixtures, "downloaded_provisioning_profile.mobileprovision")), :headers => {})
+  stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/profile/listProvisioningProfiles.action?teamId=5A997XSHAA").
+         with(:headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developer.apple.com:443'}).
+         to_return(:status => 200, :body => "", :headers => {csrf: "csrc", csrf_ts: "csrf_ts"})
+end
+
+def stub_devices
+  fixtures = "spec/psst/fixtures"
+
+  stub_request(:post, "https://developerservices2.apple.com/services/QH65B2/ios/listDevices.action").
+         with(:body => "teamId=5A997XSHAA",
+              :headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developerservices2.apple.com:443'}).
+         to_return(:status => 200, :body => File.read(File.join(fixtures, "list_devices.plist")), :headers => {})
 end
 
 WebMock.disable_net_connect!
@@ -36,5 +48,12 @@ RSpec.configure do |config|
   config.before(:each) do
     stub_login
     stub_provisioning
+    stub_devices
   end
 end
+
+require 'pry'
+require 'psst/psst'
+
+ENV["DELIVER_USER"] = "sigh@krausefx.com"
+ENV["DELIVER_PASSWORD"] = "so_secret"
