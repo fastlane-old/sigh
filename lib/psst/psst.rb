@@ -12,7 +12,9 @@ require 'psst/provisioning_profiles/provisioning_profiles'
 module FastlaneCore
   module Psst
     class Client
-      
+      def initialize(user = nil, password = nil)
+        login(user, password)
+      end
     end
   end
 end
