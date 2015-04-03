@@ -21,6 +21,10 @@ module FastlaneCore
 
       URL_DOWNLOAD_PROVISIONING_PROFILE = "https://developer.apple.com/account/ios/profile/profileContentDownload.action?displayId="
 
+      URL_CREATE_PROVISIONING_PROFILE = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/profile/createProvisioningProfile.action?teamId="
+
+      URL_GET_CSRF_VALUES = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/profile/listProvisioningProfiles.action?teamId="
+
       ######## Device Management ########
       # List all devices enabled for this Apple ID
       URL_LIST_DEVICES = "https://developerservices2.apple.com/services/#{PROTOCOL_VERSION}/ios/listDevices.action"

@@ -1,4 +1,5 @@
 require 'psst/provisioning_profiles/download_provisioning_profile'
+require 'psst/provisioning_profiles/generate_provisioning_profile'
 
 module FastlaneCore
   module Psst
@@ -24,6 +25,10 @@ module FastlaneCore
       # Downloads the given provisioning profile
       def download
         client.download_provisioning_profile(self)
+      end
+
+      def generate!
+        client.generate_provisioning_profile!(self)
       end
 
       def to_s
