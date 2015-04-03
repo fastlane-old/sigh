@@ -48,8 +48,10 @@ module FastlaneCore
         profiles = Plist::parse_xml(response)['provisioningProfiles']
 
         @provisioning_profiles = profiles.collect do |current|
-          ProvisioningProfile.create(self, current)
-        end
+          if current['managingApp'] != 'Xcode' # we don't want to deal with those profiles
+            ProvisioningProfile.create(self, current)
+          end
+        end.delete_if { |a| a.nil? } # since we ignore the Xcode ones
       end
 
       # Looks for a certain provisioning profile
