@@ -15,14 +15,22 @@ module FastlaneCore
       # A list of all teams for the given Apple ID
       URL_LIST_TEAMS = "https://developerservices2.apple.com/services/#{PROTOCOL_VERSION}/listTeams.action"
 
+      ######## Certificates ########
+      # List of all certificates, including push certificates and code signing identities
+      # There must be parameters for the teamId and the types to use
+      URL_LIST_CERTIFICATES = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/certificate/listCertRequests.action?certificateStatus=0&"
+
       ######## Provisioning Profiles ########
       # Lists all available provisioning profiles
       URL_LIST_PROVISIONING_PROFILES = "https://developerservices2.apple.com/services/#{PROTOCOL_VERSION}/ios/listProvisioningProfiles.action"
 
+      # Download a specific provisioning profile
       URL_DOWNLOAD_PROVISIONING_PROFILE = "https://developer.apple.com/account/ios/profile/profileContentDownload.action?displayId="
 
+      # Create a new provisioning profile
       URL_CREATE_PROVISIONING_PROFILE = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/profile/createProvisioningProfile.action?teamId="
 
+      # Request with a list of provisioning profiles, which we don't use. We need this request just for the CSRF values
       URL_GET_CSRF_VALUES = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/profile/listProvisioningProfiles.action?teamId="
 
       ######## Device Management ########
