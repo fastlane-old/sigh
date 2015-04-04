@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Psst", now: true do
+describe "Psst" do
   describe "Provisioning Profile" do
     before do
       @client = FastlaneCore::Psst::Client.new
