@@ -17,6 +17,13 @@ module FastlaneCore
       def to_s
         [self.name, self.udid].join(" - ")
       end
+
+      # Example
+      # id="GD25LDGN99",
+      # name="Felix Krause's iPhone 6",
+      # udid="9b9273fb85b5dd5f4dd9b9273fb85b5dd5f4dd",
+      # platform="ios",
+      # status="c">,
     end
 
 

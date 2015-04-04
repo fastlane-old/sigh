@@ -34,6 +34,28 @@ module FastlaneCore
       def to_s
         [self.name, self.type, self.app_id].join(" - ")
       end
+
+      # Example
+      
+      # name="net.sunapps.7 AppStore",
+      # type="iOS Distribution",
+      # app_id="572XTN75U2",
+      # app=
+      #   #<struct FastlaneCore::Psst::App
+      #   app_id="572XTN75U2",
+      #   name="App Name",
+      #   platform="ios",
+      #   prefix="5A997XSHK2",
+      #   identifier="net.sunapps.7",
+      #   is_wildcard=false,
+      #   dev_push_enabled=false,
+      #   prod_push_enabled=false>,
+      # status="Active",
+      # expiration=#<DateTime: 2015-11-25T22:45:50+00:00>,
+      # uuid="aad7df3b-9767-4e85-a1ea-1df4d8f32faa",
+      # id="2MAY7NPHRU",
+      # is_xcode_managed=false,
+      # distribution_method="store">
     end
 
 
@@ -46,7 +68,7 @@ module FastlaneCore
           headers: { 'Cookie' => "myacinfo=#{@myacinfo}" },
           body: "teamId=#{@team_id}"))
         profiles = Plist::parse_xml(response)['provisioningProfiles']
-
+        binding.pry
         @provisioning_profiles = profiles.collect do |current|
           if current['managingApp'] != 'Xcode' # we don't want to deal with those profiles
             ProvisioningProfile.create(self, current)
