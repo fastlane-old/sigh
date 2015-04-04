@@ -36,7 +36,7 @@ module FastlaneCore
       end
 
       # Example
-      
+
       # name="net.sunapps.7 AppStore",
       # type="iOS Distribution",
       # app_id="572XTN75U2",
@@ -68,7 +68,7 @@ module FastlaneCore
           headers: { 'Cookie' => "myacinfo=#{@myacinfo}" },
           body: "teamId=#{@team_id}"))
         profiles = Plist::parse_xml(response)['provisioningProfiles']
-        binding.pry
+        
         @provisioning_profiles = profiles.collect do |current|
           if current['managingApp'] != 'Xcode' # we don't want to deal with those profiles
             ProvisioningProfile.create(self, current)

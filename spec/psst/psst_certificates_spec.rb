@@ -8,7 +8,7 @@ describe "Psst" do
 
     describe "successfully loads and parses all certificates" do
       before do
-        @certs = @client.certificates
+        @certs = @client.certificates # no parameter => all profiles
       end
 
       it "the number is correct" do
@@ -42,6 +42,22 @@ describe "Psst" do
         expect(push.owner_id).to eq('3599RCHAAA')
         expect(push.is_push).to eq(true)
       end
+    end
+
+    it "Correctly filters the listed certificates" do
+      certs = @client.certificates(FastlaneCore::Psst::ProfileTypes::Provisioning.development)
+      expect(certs.count).to eq(1)
+
+      cert = certs.first
+      expect(cert.id).to eq('C8DL7464RQ')
+      expect(cert.name).to eq('Felix Krause')
+      expect(cert.status).to eq('Issued')
+      expect(cert.created.to_s).to eq('2014-11-25T22:55:50Z')
+      expect(cert.expires.to_s).to eq('2015-11-25T22:45:50Z')
+      expect(cert.owner_type).to eq('teamMember')
+      expect(cert.owner_name).to eq('Felix Krause')
+      expect(cert.owner_id).to eq('5Y354CXU3A')
+      expect(cert.is_push).to eq(false)
     end
   end
 end
