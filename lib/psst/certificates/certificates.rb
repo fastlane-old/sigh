@@ -14,7 +14,7 @@ module FastlaneCore
           hash['ownerType'],
           hash['ownerName'],
           hash['ownerId'],
-          hash['ownerType'] == 'bundle' # certificates have the type 'team'
+          hash['ownerType'] == 'bundle' # certificates have the type 'team' or 'teamMember'
         )
       end
 

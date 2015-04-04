@@ -40,6 +40,9 @@ def stub_certificates(fixtures)
   stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/certificate/listCertRequests.action?certificateStatus=0&teamId=5A997XSHAA&types=5QPB9NHCEI,R58UK2EWSO,9RQEK7MSXA,LA30L5BJEU,BKLRAVXMGM,3BQKVH9I2X,Y3B2F3TYSI,3T2ZP62QW8,E5D663CMZW,4APLUP237T").
          with(:headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developer.apple.com:443'}).
          to_return(:status => 200, :body => File.read(File.join(fixtures, "list_certificates.json")), :headers => {})
+  stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/certificate/listCertRequests.action?certificateStatus=0&teamId=5A997XSHAA&types=5QPB9NHCEI").
+         with(:headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developer.apple.com:443'}).
+         to_return(:status => 200, :body => File.read(File.join(fixtures, "list_certificates_filtered.json")), :headers => {})
 end
 
 WebMock.disable_net_connect!
