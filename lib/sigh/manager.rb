@@ -8,13 +8,11 @@ module Sigh
     CLEANUP = "cleanup"
 
     def run(options, args)
-      command, clean_team_provisioning, clean_custom_pattern = get_inputs(options, args)
+      command, clean_expired, clean_pattern = get_inputs(options, args)
       if command == LIST
         list_profiles
       elsif command == CLEANUP
-        pattern = clean_team_provisioning
-        pattern = clean_custom_pattern if clean_custom_pattern
-        cleanup_profiles(pattern)
+        cleanup_profiles(clean_expired, clean_pattern)
       end
     end
 
@@ -56,10 +54,10 @@ module Sigh
     end
 
     def get_inputs(options, args)
-      command = args.first || LIST
-      clean_team_provisioning = /iOS\ {0,1}Team Provisioning Profile: \w/ if options.clean_team_provisioning
-      clean_custom_pattern = /#{options.clean_custom_pattern}/ if options.clean_custom_pattern
-      return command, clean_team_provisioning, clean_custom_pattern
+      clean_expired = options.clean_expired
+      clean_pattern = /#{options.clean_pattern}/ if options.clean_pattern
+      command = (clean_expired != nil || clean_pattern != nil) ? CLEANUP : LIST
+      return command, clean_expired, clean_pattern
     end
 
     def list_profiles
@@ -97,8 +95,10 @@ module Sigh
       Helper.log.info "#{profiles_valid.length} are valid".green
     end
 
-    def cleanup_profiles(pattern = nil)
-      profiles = load_profiles.select { |profile| profile["ExpirationDate"] < DateTime.now || (pattern != nil && profile["Name"] =~ pattern) }
+    def cleanup_profiles(expired = false, pattern = nil)
+      now = DateTime.now
+
+      profiles = load_profiles.select { |profile| (expired && profile["ExpirationDate"] < now) || (pattern != nil && profile["Name"] =~ pattern) }
 
       Helper.log.info "The following provisioning profiles are either expired or matches your pattern:"
       profiles.each do |profile|
