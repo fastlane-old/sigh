@@ -45,7 +45,7 @@ describe "Psst" do
     end
 
     it "Correctly filters the listed certificates" do
-      certs = @client.certificates(FastlaneCore::Psst::ProfileTypes::Provisioning.development)
+      certs = @client.certificates(FastlaneCore::Psst::ProfileTypes::SigningCertificate.development)
       expect(certs.count).to eq(1)
 
       cert = certs.first

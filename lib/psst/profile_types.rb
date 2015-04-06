@@ -2,7 +2,7 @@ module FastlaneCore
   module Psst
     # This class contains the codes used for the different types of profiles
     class ProfileTypes
-      class Provisioning
+      class SigningCertificate
         def self.development
           "5QPB9NHCEI"
         end
@@ -22,8 +22,8 @@ module FastlaneCore
 
       def self.all_profile_types
         [
-          "5QPB9NHCEI", # Development Provisioning Profiles
-          "R58UK2EWSO", # Distribution Provisioning Profiles
+          "5QPB9NHCEI", # Development Code Signing Identity
+          "R58UK2EWSO", # Distribution Code Signing Identity
           "9RQEK7MSXA", # iOS Distribution certificate signing request
           "LA30L5BJEU", # MDM CSR certificate signing request
           "BKLRAVXMGM", # Development Push Certificates
