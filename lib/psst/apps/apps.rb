@@ -18,6 +18,16 @@ module FastlaneCore
       def to_s
         [self.name, self.identifier].join(" - ")
       end
+
+      # Example
+      # app_id="572XTN75U2",
+      # name="App Name",
+      # platform="ios",
+      # prefix="5A997XSHK2",
+      # identifier="net.sunapps.7",
+      # is_wildcard=false,
+      # dev_push_enabled=false,
+      # prod_push_enabled=false>,
     end
 
 
