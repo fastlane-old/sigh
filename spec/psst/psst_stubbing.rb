@@ -45,6 +45,13 @@ def stub_certificates(fixtures)
          to_return(:status => 200, :body => File.read(File.join(fixtures, "list_certificates_filtered.json")), :headers => {})
 end
 
+def stub_apps(fixtures)
+  stub_request(:post, "https://developer.apple.com/services-account/QH65B2/account/ios/identifiers/listAppIds.action").
+         with(:body => "teamId=5A997XSHAA",
+              :headers => {'Cookie'=>'myacinfo=abcdef', 'Host'=>'developer.apple.com:443'}).
+         to_return(:status => 200, :body => File.read(File.join(fixtures, "list_apps.json")), :headers => {})
+end
+
 WebMock.disable_net_connect!
 
 RSpec.configure do |config|
@@ -55,5 +62,6 @@ RSpec.configure do |config|
     stub_provisioning(fixtures)
     stub_devices(fixtures)
     stub_certificates(fixtures)
+    stub_apps(fixtures)
   end
 end
