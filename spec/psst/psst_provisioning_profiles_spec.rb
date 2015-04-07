@@ -48,15 +48,25 @@ describe "Psst" do
     it "raises an exception when passing an invalid distribution type" do
       expect {
         @client.fetch_provisioning_profile('net.sunapps.999', 'invalid_parameter')
-      }.to raise_exception("Invalid distribution_method")
+      }.to raise_exception("Invalid distribution_method 'invalid_parameter'".red)
     end
 
-    it "creates a new provisioning profile if it doesn't exist" do
-      # path = @client.fetch_provisioning_profile('net.sunapps.106', 'limited').download
-    end
+    describe "Create a new profile" do
+      before do
+        ENV.delete "SIGH_PROVISIONING_PROFILE_NAME"
+      end
 
-    it "repairs a provisioning profile if the old one is broken" do
+      it "creates a new provisioning profile if it doesn't exist" do
+        ENV["SIGH_PROVISIONING_PROFILE_NAME"] = "Not Yet Taken" # custom name
+        path = @client.fetch_provisioning_profile('net.sunapps.106', 'limited').download
+      end
 
-    end
+      it "Throws a warning if name is already taken" do
+        expect {
+          # This uses the standard name which is already taken
+          @client.fetch_provisioning_profile('net.sunapps.106', 'limited').download
+        }.to raise_exception('Multiple profiles found with the name "Test Name 3".  Please remove the duplicate profiles and try again.\nThere are no current certificates on this team matching the provided certificate IDs.'.red)
+      end
+    end 
   end
 end
