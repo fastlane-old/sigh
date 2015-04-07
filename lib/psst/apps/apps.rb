@@ -1,6 +1,6 @@
 module FastlaneCore
   module Psst
-    class App < Struct.new(:app_id, :name, :platform, :prefix, :identifier, :is_wildcard, :dev_push_enabled, :prod_push_enabled)
+    class App < Struct.new(:app_id, :name, :platform, :prefix, :identifier, :is_wildcard)
       # Parse the server response
       def self.create(hash)
         App.new(
@@ -9,9 +9,7 @@ module FastlaneCore
           hash['appIdPlatform'],
           hash['prefix'],
           hash['identifier'],
-          hash['isWildCard'],
-          hash['isDevPushEnabled'],
-          hash['isProdPushEnabled']
+          hash['isWildCard']
         )
       end
 
@@ -32,6 +30,17 @@ module FastlaneCore
 
 
     class Client
+      def apps
+        return @apps if @apps
+
+        response = JSON.parse(unzip(Excon.post(URL_APP_IDS, 
+          headers: { 'Cookie' => "myacinfo=#{@myacinfo}" },
+          body: "teamId=#{@team_id}")))
+
+        response['appIds'].collect do |app|
+          App.create(app)
+        end
+      end
 
     end
   end

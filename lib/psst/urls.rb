@@ -36,6 +36,10 @@ module FastlaneCore
       ######## Device Management ########
       # List all devices enabled for this Apple ID
       URL_LIST_DEVICES = "https://developerservices2.apple.com/services/#{PROTOCOL_VERSION}/ios/listDevices.action"
+
+      ######## App IDs ########
+      # List all available App IDs
+      URL_APP_IDS = "https://developer.apple.com/services-account/#{PROTOCOL_VERSION}/account/ios/identifiers/listAppIds.action"
     end
   end
 end
