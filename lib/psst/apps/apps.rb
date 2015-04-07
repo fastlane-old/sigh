@@ -42,6 +42,16 @@ module FastlaneCore
         end
       end
 
+      def fetch_app(bundle_identifier)
+        apps.each do |app|
+          if app.identifier == bundle_identifier
+            return app
+          end
+        end
+
+        available = apps.collect { |a| a.identifier }
+        raise "Couldn't find app with bundle identifier '#{bundle_identifier}'. Available:\n\n#{available.join("\n")}".red
+      end
     end
   end
 end
