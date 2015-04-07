@@ -105,7 +105,7 @@ module Sigh
         Helper.log.info profile["Name"].red
       end
 
-      if agree("Delete these provisioning profiles? (y/n)  ", true)
+      if agree("Delete these provisioning profiles #{profiles.length}? (y/n)  ", true)
         Helper.log.info "Deleting #{profiles.length} profiles"
         profiles.each do |profile|
           File.delete profile["Path"]
