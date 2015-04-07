@@ -19,7 +19,7 @@ module FastlaneCore
       end
 
       def to_s
-        [self.name, self.owner_type, self.id].join(" - ")
+        [self.name, self.owner_type.capitalize, self.id].join(" - ")
       end
 
       # Examples

@@ -5,13 +5,23 @@ module Sigh
   class Manager
     def self.start
       psst = FastlaneCore::Psst::Client.new
-      path = psst.fetch_provisioning_profile('net.sunapps.9', 'store').download
 
+      distribution_method = 'store'
+      distribution_method = 'adhoc' if Sigh.config[:adhoc]
+      distribution_method = 'limited' if Sigh.config[:development]
+
+      path = psst.fetch_provisioning_profile(Sigh.config[:app_identifier], distribution_method).download
+
+      output = post_process_profile(path)
+
+      return output
+    end
+
+    def self.post_process_profile(path)
       raise "Something went wrong when downloading the provisioning profile" unless (path and File.exists?path)
-      
+
       udid = Sigh::ProfileAnalyser.run(path)
       ENV["SIGH_UDID"] = udid if udid
-      
 
       if Sigh.config[:filename]
         file_name = Sigh.config[:filename]
@@ -22,11 +32,13 @@ module Sigh
       output = File.join(Sigh.config[:output_path].gsub("~", ENV["HOME"]), file_name)
       (FileUtils.mv(path, output) rescue nil) # in case it already exists
 
+      output = File.expand_path(output)
+
       install_profile(output) unless Sigh.config[:skip_install]
 
       puts output.green
 
-      return File.expand_path(output)
+      output
     end
 
     def self.install_profile(profile)
