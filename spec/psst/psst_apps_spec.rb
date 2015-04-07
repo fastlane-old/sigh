@@ -12,7 +12,7 @@ describe "Psst" do
       end
 
       it "the number is correct" do
-        expect(@apps.count).to eq(4)
+        expect(@apps.count).to eq(5)
       end
 
       it "parses app correctly" do
