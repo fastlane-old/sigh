@@ -31,6 +31,20 @@ describe "Psst" do
       expect(profile.distribution_method).to eq('limited')
     end
 
+    it "updates the distribution method to adhoc if devices are enabled" do
+      adhoc = @client.provisioning_profiles[2]
+
+      expect(adhoc.distribution_method).to eq('adhoc')
+      expect(adhoc.devices.count).to eq(13)
+
+      device = adhoc.devices.first
+      expect(device.id).to eq('RK3285QATH')
+      expect(device.name).to eq('Felix Krause\'s iPhone 5')
+      expect(device.udid).to eq('aaabbbccccddddaaabbb')
+      expect(device.platform).to eq('ios')
+      expect(device.status).to eq('c')
+    end
+
     it "raises an exception when passing an invalid distribution type" do
       expect {
         @client.fetch_provisioning_profile('net.sunapps.999', 'invalid_parameter')

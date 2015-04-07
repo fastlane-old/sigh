@@ -4,10 +4,10 @@ require 'psst/provisioning_profiles/generate_provisioning_profile'
 module FastlaneCore
   module Psst
 
-    class ProvisioningProfile < Struct.new(:client, :name, :type, :app_id, :app, :status, :expiration, :uuid, :id, :is_xcode_managed, :distribution_method)
+    class ProvisioningProfile < Struct.new(:client, :name, :type, :app_id, :app, :status, :expiration, :uuid, :id, :is_xcode_managed, :distribution_method, :devices)
       # Parse the server response
       def self.create(client, hash)
-        ProvisioningProfile.new(
+        prov = ProvisioningProfile.new(
           client,
           hash['name'],
           hash['type'],
@@ -18,8 +18,15 @@ module FastlaneCore
           hash['UUID'],
           hash['provisioningProfileId'],
           hash['managingApp'] == 'Xcode',
-          hash['distributionMethod']
+          hash['distributionMethod'], # Available values: limited, adhoc, store
+          hash['devices'].collect { |d| Device.create(client, d) }
         )
+
+        # Apple stores AdHoc profiles as 'store'. We want to be able to also select adhoc profiles
+        # Since ad hoc profiles usually contain devices (otherwise they are useless), we can set that based on this
+        prov.distribution_method = 'adhoc' if (prov.distribution_method == 'store' and prov.devices.count > 0)
+
+        prov
       end
 
       # Downloads the given provisioning profile
@@ -78,9 +85,9 @@ module FastlaneCore
 
       # Looks for a certain provisioning profile
       # If it doesn't exist yet, it will be created
-      # distribution_method valid values: [store, limited]
+      # @param distribution_method valid values: [store, limited, adhoc]
       def fetch_provisioning_profile(bundle_identifier, distribution_method)
-        raise "Invalid distribution_method" unless ['store', 'limited'].include?distribution_method
+        raise "Invalid distribution_method '#{distribution_method}'".red unless ['store', 'limited', 'adhoc'].include?distribution_method
 
         provisioning_profiles.each do |profile|
           if profile.app.identifier == bundle_identifier and profile.distribution_method == distribution_method
