@@ -35,7 +35,7 @@ module FastlaneCore
       end
 
       def generate!
-        client.generate_provisioning_profile!(self)
+        client.generate_provisioning_profile!(self, self.distribution_method)
       end
 
       def to_s
@@ -87,7 +87,7 @@ module FastlaneCore
       # If it doesn't exist yet, it will be created
       # @param distribution_method valid values: [store, limited, adhoc]
       def fetch_provisioning_profile(bundle_identifier, distribution_method)
-        raise "Invalid distribution_method '#{distribution_method}'".red unless ['store', 'limited', 'adhoc'].include?distribution_method
+        raise "Invalid distribution_method '#{distribution_method}'".red unless ['store', 'adhoc', 'limited'].include?distribution_method
 
         provisioning_profiles.each do |profile|
           if profile.app.identifier == bundle_identifier and profile.distribution_method == distribution_method
@@ -95,7 +95,22 @@ module FastlaneCore
           end
         end
 
-        nil
+        Helper.log.warn "Profile doesn't exist yet... creating it now"
+        profile = ProvisioningProfile.new
+        profile.client = self
+        profile.distribution_method = distribution_method
+        profile.name = (Sigh.config[:provisioning_name] || [bundle_identifier, distribution_method].join(' '))
+        profile.app = fetch_app(bundle_identifier)
+        profile.generate!
+
+        @provisioning_profiles = nil # to fetch them again, since we changed something
+
+        if Helper.is_test? # to not end in an endless recursion
+          bundle_identifier = 'net.sunapps.9'
+          distribution_method = 'store'
+        end
+        
+        fetch_provisioning_profile(bundle_identifier, distribution_method) # such recursive
       end
     end
   end
