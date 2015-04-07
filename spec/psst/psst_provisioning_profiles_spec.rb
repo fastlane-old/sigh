@@ -10,7 +10,7 @@ describe "Psst" do
       path = @client.fetch_provisioning_profile('net.sunapps.9', 'store').download
 
       # File is correct
-      expect(path).to eq("/tmp/net.sunapps.9.mobileprovision")
+      expect(path).to eq("/tmp/net.sunapps.9.store.mobileprovision")
       xml = Plist::parse_xml(File.read(path))
       expect(xml['AppIDName']).to eq("SunApp Setup")
       expect(xml['TeamName']).to eq("SunApps GmbH")
