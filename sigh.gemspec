@@ -24,6 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fastlane_core', '>= 0.3.1' # all shared code and dependencies
   spec.add_dependency 'plist', '~> 3.1.0' # for reading the provisioning profile
 
+  spec.add_dependency 'excon' # HTTP Client
+  spec.add_dependency 'plist', '~> 3.1.0' # for reading the Psst Response
+
   # Development only
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
