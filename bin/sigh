@@ -37,6 +37,20 @@ class SighApplication
       end
     end
 
+    command :expired do |c|
+      c.syntax = 'sign expired'
+      c.description = 'Will list and optionally renew all expired profiles.'
+      c.option '-r', '--renew', String, 'Will perform renewal on each of the listed expired profiles'
+
+      c.action do |args, options|
+        global_options = options.__hash__.dup
+        global_options.delete(:renew)
+
+        Sigh.config = FastlaneCore::Configuration.create(Sigh::Options.available_options, global_options)
+        Sigh::Manager.expired_profiles(options, args)
+      end
+    end
+
     command :resign do |c|
       c.syntax = 'sigh resign'
       c.description = 'Resigns an existing ipa file with the given provisioning profile'
@@ -51,7 +65,7 @@ class SighApplication
     command :manage do |c|
       c.syntax = 'sigh manage'
       c.description = 'Manage installed provisioning profiles on your system.'
-      
+
       c.option '-e', '--clean_expired', 'Remove all expired provisioning profiles.'
 
       c.option '-p', '--clean_pattern STRING', String, 'Remove any provisioning profiles that matches the regular expression.'

@@ -23,6 +23,14 @@ module Sigh
       return File.expand_path(output)
     end
 
+    def self.expired_profiles(options, args)
+      profiles = Sigh::DeveloperCenter.new.expired_profiles
+
+      profiles.each do |profile|
+        Helper.log.info "#{ profile[:name] } (#{ profile[:id] }) expired on #{ profile[:expired_on] }"
+      end
+    end
+
     def self.install_profile(profile)
       Helper.log.info "Installing provisioning profile..."
       profile_path = File.expand_path("~") + "/Library/MobileDevice/Provisioning Profiles/"
