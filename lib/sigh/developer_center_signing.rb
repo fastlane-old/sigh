@@ -101,5 +101,9 @@ module Sigh
 
       raise "Could not find a Certificate#{predicates_str}. Please open #{current_url} and make sure you have a signing profile created, which matches the given filters".red
     end
+
+    def code_signing_certificate_for_renewal
+      @code_signing_certificate ||= code_signing_certificates(@type).first
+    end
   end
 end

@@ -11,9 +11,7 @@ module Sigh
     PROFILES_URL_DEV = "https://developer.apple.com/account/ios/profile/profileList.action?type=limited"
 
     def run
-      @type = Sigh::DeveloperCenter::APPSTORE
-      @type = Sigh::DeveloperCenter::ADHOC if Sigh.config[:adhoc]
-      @type = Sigh::DeveloperCenter::DEVELOPMENT if Sigh.config[:development]
+      determine_type
 
       cert = maintain_app_certificate # create/download the certificate
 
@@ -44,6 +42,8 @@ module Sigh
     end
 
     def expired_profiles
+      determine_type
+      
       required_cert_types = (@type == DEVELOPMENT ? ['iOS Development'] : ['iOS Distribution', 'iOS UniversalDistribution'])
 
       begin
@@ -270,8 +270,8 @@ module Sigh
       wait_for_elements('.row-details')
     end
 
-    def renew_profile(profile_id)
-      certificate = code_signing_certificates(@type).first
+    def renew_profile(profile_id, certificate = nil)
+      certificate ||= code_signing_certificates(@type).first
 
       details_url = "https://developer.apple.com/account/ios/profile/profileEdit.action?type=&provisioningProfileId=#{profile_id}"
       Helper.log.info "Renewing provisioning profile '#{profile_id}' using URL '#{details_url}'"
@@ -338,6 +338,12 @@ module Sigh
         else
           raise "Error fetching details for provisioning profile '#{profile_id}'".red
         end
+      end
+
+      def determine_type
+        @type = Sigh::DeveloperCenter::APPSTORE
+        @type = Sigh::DeveloperCenter::ADHOC if Sigh.config[:adhoc]
+        @type = Sigh::DeveloperCenter::DEVELOPMENT if Sigh.config[:development]
       end
   end
 end
