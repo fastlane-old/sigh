@@ -6,14 +6,14 @@
   </a>
 </h3>
 <p align="center">
-  <a href="https://github.com/KrauseFx/deliver">deliver</a> &bull; 
-  <a href="https://github.com/KrauseFx/snapshot">snapshot</a> &bull; 
-  <a href="https://github.com/KrauseFx/frameit">frameit</a> &bull; 
-  <a href="https://github.com/KrauseFx/PEM">PEM</a> &bull; 
-  <b>sigh</b> &bull; 
+  <a href="https://github.com/KrauseFx/deliver">deliver</a> &bull;
+  <a href="https://github.com/KrauseFx/snapshot">snapshot</a> &bull;
+  <a href="https://github.com/KrauseFx/frameit">frameit</a> &bull;
+  <a href="https://github.com/KrauseFx/PEM">PEM</a> &bull;
+  <b>sigh</b> &bull;
   <a href="https://github.com/KrauseFx/produce">produce</a> &bull;
   <a href="https://github.com/KrauseFx/cert">cert</a> &bull;
-  <a href="https://github.com/KrauseFx/codes">codes</a> 
+  <a href="https://github.com/KrauseFx/codes">codes</a>
 </p>
 -------
 
@@ -38,12 +38,12 @@ Special thanks to [Matthias Tretter](https://twitter.com/myell0w) for coming up 
 
 -------
 <p align="center">
-    <a href="#features">Features</a> &bull; 
-    <a href="#installation">Installation</a> &bull; 
-    <a href="#usage">Usage</a> &bull; 
-    <a href="#resign">Resign</a> &bull; 
-    <a href="#how-does-it-work">How does it work?</a> &bull; 
-    <a href="#tips">Tips</a> &bull; 
+    <a href="#features">Features</a> &bull;
+    <a href="#installation">Installation</a> &bull;
+    <a href="#usage">Usage</a> &bull;
+    <a href="#resign">Resign</a> &bull;
+    <a href="#how-does-it-work">How does it work?</a> &bull;
+    <a href="#tips">Tips</a> &bull;
     <a href="#need-help">Need help?</a>
 </p>
 
@@ -90,7 +90,7 @@ Make sure, you have the latest version of the Xcode command line tools installed
     sigh
 Yes, that's the whole command!
 
-```sigh``` will create, repair and download profiles for the App Store by default. 
+```sigh``` will create, repair and download profiles for the App Store by default.
 
 You can pass your bundle identifier and username like this:
 
@@ -99,25 +99,25 @@ You can pass your bundle identifier and username like this:
 If you want to generate an **Ad Hoc** profile instead of an App Store profile:
 
     sigh --adhoc
-    
+
 If you want to generate a **Development** profile:
 
     sigh --development
 
-To generate the profile in a specific directory: 
+To generate the profile in a specific directory:
 
     sigh -o "~/Certificates/"
 
 For a list of available commands run
 
     sigh --help
-    
+
 ### Advanced
 
 By default, ```sigh``` will install the downloaded profile on your machine. If you just want to generate the profile and skip the installation, use the following flag:
 
     sigh --skip_install
-    
+
 To save the provisioning profile under a specific name, use the -f option:
 
     sigh -a com.krausefx.app -u username -f "myProfile.mobileprovision"
@@ -133,6 +133,16 @@ By default, ```sigh``` will include all certificates on development profiles, an
 Or identify be expire date if you're using the same names for multiple certificates
 
     sigh -d "Nov 11, 2017"
+
+### Renewing all expired certificates
+
+Sigh can list out all expired profiles at the command line and even optionally renew all of the expired profiles in one command.
+
+    sigh expired
+
+By default `sigh` will only list the expired certificates.  If you want to renew each certificate, pass the `--renew` option.
+
+    sigh expired --renew
 
 # Resign
 
@@ -204,7 +214,7 @@ If you're using [cert](https://github.com/KrauseFx/cert) in combination with [fa
 ## Use the 'Provisioning Quicklook plugin'
 Download and install the [Provisioning Plugin](https://github.com/chockenberry/Provisioning).
 
-It will show you the ```mobileprovision``` files like this: 
+It will show you the ```mobileprovision``` files like this:
 ![assets/QuickLookScreenshot.png](assets/QuickLookScreenshot.png)
 
 

@@ -9,14 +9,12 @@ module Sigh
     DEVELOPMENT = "Development"
 
     PROFILES_URL_DEV = "https://developer.apple.com/account/ios/profile/profileList.action?type=limited"
-    
+
     def run
-      @type = Sigh::DeveloperCenter::APPSTORE
-      @type = Sigh::DeveloperCenter::ADHOC if Sigh.config[:adhoc]
-      @type = Sigh::DeveloperCenter::DEVELOPMENT if Sigh.config[:development]
+      determine_type
 
       cert = maintain_app_certificate # create/download the certificate
-      
+
       if @type == APPSTORE # both enterprise and App Store
         type_name = "Distribution"
       elsif @type == ADHOC
@@ -43,10 +41,13 @@ module Sigh
       ENV["SIGH_UDID"] = udid if udid
     end
 
-    def maintain_app_certificate(force = nil)
-      force = Sigh.config[:force] if (force == nil)
+    def expired_profiles
+      determine_type
+      
+      required_cert_types = (@type == DEVELOPMENT ? ['iOS Development'] : ['iOS Distribution', 'iOS UniversalDistribution'])
+
       begin
-        if @type == DEVELOPMENT 
+        if @type == DEVELOPMENT
           visit PROFILES_URL_DEV
         else
           visit PROFILES_URL
@@ -55,7 +56,57 @@ module Sigh
         @list_certs_url = wait_for_variable('profileDataURL')
         # list_certs_url will look like this: "https://developer.apple.com/services-account/..../account/ios/profile/listProvisioningProfiles.action?content-type=application/x-www-form-urlencoded&accept=application/json&requestId=id&userLocale=en_US&teamId=xy&includeInactiveProfiles=true&onlyCountLists=true"
         Helper.log.info "Fetching all available provisioning profiles..."
-        
+
+        has_all_profiles = false
+        page_index = 1
+        page_size = 500
+        certificates = []
+
+        until has_all_profiles do
+          certs = post_ajax(@list_certs_url, "{pageNumber: #{page_index}, pageSize: #{page_size}, sort: 'name%3dasc', search: ''}")
+          if certs
+            profile_count = certs['provisioningProfiles'].count
+
+            Helper.log.info "Fetched #{ profile_count } profiles..."
+
+            certs['provisioningProfiles'].each do |current_cert|
+              next unless required_cert_types.include?(current_cert['type'])
+              next unless current_cert['status'] == 'Expired'
+
+              certificates << {
+                id: current_cert['provisioningProfileId'],
+                expired_on: current_cert['dateExpire'],
+                name: current_cert['name']
+              }
+            end
+
+            if page_size <= profile_count
+              page_index += 1
+            else
+              has_all_profiles = true
+            end
+          end
+        end
+
+        certificates
+      rescue => ex
+        error_occured(ex)
+      end
+    end
+
+    def maintain_app_certificate(force = nil)
+      force = Sigh.config[:force] if (force == nil)
+      begin
+        if @type == DEVELOPMENT
+          visit PROFILES_URL_DEV
+        else
+          visit PROFILES_URL
+        end
+
+        @list_certs_url = wait_for_variable('profileDataURL')
+        # list_certs_url will look like this: "https://developer.apple.com/services-account/..../account/ios/profile/listProvisioningProfiles.action?content-type=application/x-www-form-urlencoded&accept=application/json&requestId=id&userLocale=en_US&teamId=xy&includeInactiveProfiles=true&onlyCountLists=true"
+        Helper.log.info "Fetching all available provisioning profiles..."
+
         has_all_profiles = false
         page_index = 1
         page_size = 500
@@ -74,7 +125,7 @@ module Sigh
             required_cert_types = (@type == DEVELOPMENT ? ['iOS Development'] : ['iOS Distribution', 'iOS UniversalDistribution'])
             certs['provisioningProfiles'].each do |current_cert|
               next unless required_cert_types.include?(current_cert['type'])
-              
+
               details = profile_details(current_cert['provisioningProfileId'])
 
               if details['provisioningProfile']['appId']['identifier'] == bundle_id
@@ -219,8 +270,8 @@ module Sigh
       wait_for_elements('.row-details')
     end
 
-    def renew_profile(profile_id)
-      certificate = code_signing_certificates(@type).first
+    def renew_profile(profile_id, certificate = nil)
+      certificate ||= code_signing_certificates(@type).first
 
       details_url = "https://developer.apple.com/account/ios/profile/profileEdit.action?type=&provisioningProfileId=#{profile_id}"
       Helper.log.info "Renewing provisioning profile '#{profile_id}' using URL '#{details_url}'"
@@ -287,6 +338,12 @@ module Sigh
         else
           raise "Error fetching details for provisioning profile '#{profile_id}'".red
         end
+      end
+
+      def determine_type
+        @type = Sigh::DeveloperCenter::APPSTORE
+        @type = Sigh::DeveloperCenter::ADHOC if Sigh.config[:adhoc]
+        @type = Sigh::DeveloperCenter::DEVELOPMENT if Sigh.config[:development]
       end
   end
 end
