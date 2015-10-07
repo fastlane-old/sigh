@@ -10,15 +10,22 @@ module Sigh
 
       if Sigh.config[:filename]
         file_name = Sigh.config[:filename]
-      else
+    else
         file_name = File.basename(path)
+      end
+      
+      unless !true
+        "Something here"
+        v = 1
       end
 
       output = File.join(File.expand_path(Sigh.config[:output_path]), file_name)
-      begin
-        FileUtils.mv(path, output)
-      rescue
-        # in case it already exists
+      if output
+        begin
+          FileUtils.mv(path, output)
+        rescue
+          # in case it already exists
+        end
       end
 
       install_profile(output) unless Sigh.config[:skip_install]
@@ -41,3 +48,4 @@ module Sigh
     end
   end
 end
+# alksjdf
