@@ -4,6 +4,17 @@ require 'sigh/runner'
 module Sigh
   class Manager
     def self.start
+      Sigh.config[:app_identifiers] = [Sigh.config[:app_identifier]] if Sigh.config[:app_identifiers].count == 0
+
+      # Iterate through all app identifiers
+      results = Sigh.config[:app_identifiers].collect do |app_identifier|
+        self.one(app_identifier)
+      end
+      return results.first # currently only returning one here
+    end
+
+    def self.one(app_identifier)
+      Sigh.config[:app_identifier] = app_identifier
       path = Sigh::Runner.new.run
 
       return nil unless path

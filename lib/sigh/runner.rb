@@ -6,15 +6,18 @@ module Sigh
 
     # Uses the spaceship to create or download a provisioning profile
     # returns the path the newly created provisioning profile (in /tmp usually)
+    # rubocop:disable Metrics/AbcSize
     def run
       FastlaneCore::PrintTable.print_values(config: Sigh.config,
                                          hide_keys: [:output_path],
                                              title: "Summary for sigh #{Sigh::VERSION}")
 
-      Helper.log.info "Starting login with user '#{Sigh.config[:username]}'"
-      Spaceship.login(Sigh.config[:username], nil)
-      Spaceship.select_team
-      Helper.log.info "Successfully logged in"
+      if Spaceship::Portal.client.nil? or Spaceship::Portal.client.user != Sigh.config[:username]
+        Helper.log.info "Starting login with user '#{Sigh.config[:username]}'"
+        Spaceship.login(Sigh.config[:username], nil)
+        Spaceship.select_team
+        Helper.log.info "Successfully logged in"
+      end
 
       profiles = [] if Sigh.config[:skip_fetch_profiles]
       profiles ||= fetch_profiles # download the profile if it's there
@@ -35,6 +38,7 @@ module Sigh
         end
       else
         Helper.log.info "No existing profiles found, that match the certificates you have installed, creating a new one for you".yellow
+        Helper.log.info "You can run `sigh --skip_certificate_verification` to not verify the local certificates of the profile"
         ensure_app_exists!
         profile = create_profile!
       end
@@ -49,6 +53,7 @@ module Sigh
 
       return download_profile(profile)
     end
+    # rubocop:enable Metrics/AbcSize
 
     # The kind of provisioning profile we're interested in
     def profile_type
