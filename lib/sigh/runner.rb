@@ -97,6 +97,13 @@ module Sigh
       cert = certificate_to_use
       bundle_id = Sigh.config[:app_identifier]
       name = Sigh.config[:provisioning_name] || [bundle_id, profile_type.pretty_type].join(' ')
+      platform = Sigh.config[:platform]
+      sub_platform = nil
+
+      if platform == 'tvos'
+        sub_platform = 'tvOS'
+        platform = 'ios'
+      end
 
       unless Sigh.config[:skip_fetch_profiles]
         if Spaceship.provisioning_profile.all.find { |p| p.name == name }
@@ -105,10 +112,14 @@ module Sigh
         end
       end
 
-      UI.important "Creating new provisioning profile for '#{Sigh.config[:app_identifier]}' with name '#{name}'"
+      UI.important "Creating new provisioning profile for '#{Sigh.config[:app_identifier]}' with name '#{name}' and platform '#{platform}' - '#{sub_platform}'"
       profile = profile_type.create!(name: name,
                                 bundle_id: bundle_id,
-                              certificate: cert)
+                              certificate: cert,
+                                  devices: [],
+                                 platform: platform,
+                             sub_platform: sub_platform
+                                    )
       profile
     end
 
